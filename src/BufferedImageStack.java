@@ -1,16 +1,40 @@
+// File name: BufferedImageStack
+// By: Aaron Nguyen and Jeremy Schoonover
+//WHAT IS IT DOING
 import java.awt.image.BufferedImage;
+import java.util.EmptyStackException;
 
 public class BufferedImageStack {
 
+	public BufferedImage[] array;
+	public BufferedImageStack(BufferedImage[] b) {
+		array = new BufferedImage[2];
+		array = b;
+		
+	}
 	public static void main(String[] args) {
 		
 	}
+	
 	//enters buffered image into stack and returns nothing 
 	//If this would exceed the capacity of the array,
 	//then a new array should be allocated having double the size of the old array,
 	//and the old array's elements copied to the new array.
 	private void push(BufferedImage someBufferedImage) {
-		
+		int cap=0; //measures capacity
+		for(int i = 0; i<array.length; i++) {
+			if(array[i] == null) { //checks if image is there
+				cap++; // if not adds to cap
+				array[i] = someBufferedImage; // sets an image to that spot
+			}
+		}
+		BufferedImage[] newArray = new BufferedImage[array.length * 2]; //creates a bigger array
+		if(cap==0) {
+			for(int i = 0; i<array.length; i++) {
+				newArray[i] = someBufferedImage; //copies to new array
+			}
+			newArray[array.length] = someBufferedImage; 
+		}
 	}
 	
 	/*throws an exception if the stack is empty; otherwise returns the top
@@ -19,13 +43,27 @@ public class BufferedImageStack {
 	required to ever replace a large array by a smaller array when the number of
 	stack elements decreases because of pop operations.*/
 	public BufferedImage pop() {
-		return null;
-		
+		if(array.length == 0) {
+			throw new EmptyStackException(); //returns excpetion if empty 
+		}
+		BufferedImage image;
+		for(int i=array.length-1; i<0; i--) { // goes backwords from the top
+			if(array[i] != null) { //if that postion has an image it returns 
+				image = array[i];
+				return image; //return
+			}
+		}
+		return null;		 //returns null if none are found
 	}
 	
 	//returns true if there are no items in the stack; false otherwise.
 	public boolean isEmpty() {
-		return false;
+		for(BufferedImage image: array) { //goes through every slot in array
+			if(image != null) { //if something returns false
+				return false;
+			}
+		}
+		return true; // if no false returns true;
 	}
 	
 	/*returns the buffered image at the position given by the index.
@@ -34,12 +72,18 @@ public class BufferedImageStack {
 	IndexOutOfBounds exception. (Note: get(0) gets the bottom element of the
 	stack -- the one that was pushed in first, but not yet popped out.)*/
 	public BufferedImage get(int index) {
-		return null;
+		return array[index]; //gets image at certain index
 	}
 	
 	//returns the number elements currently in the stack.
 	public int getSize() {
-		return 0;
+		int size=0;
+		for(int i=0;i<array.length; i++) {
+			if(array[i] != null) {
+				size++;
+			}
+		}
+		return size; //returns size of array with elements in it
 	}
 	
 	/*returns the current size of the array being used to hold the
@@ -47,6 +91,6 @@ public class BufferedImageStack {
 	but may be used by the grading software to assure compliance with the
 	specifications.*/
 	public int getArraySize() {
-		return 0;
+		return array.length; //returns array size
 	}
 }
