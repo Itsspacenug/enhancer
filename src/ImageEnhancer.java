@@ -47,6 +47,8 @@ public class ImageEnhancer extends Component implements ActionListener {
 
     //  Students: Here, you should declare two variables to hold instances
     	//of your stack class, with one for Undo and one for Redo.
+    private BufferedImageStack Undo;
+    private BufferedImageStack Redo;
     
 
     // A 3x3 filtering kernel for high-pass filtering:
@@ -151,7 +153,9 @@ public class ImageEnhancer extends Component implements ActionListener {
         }
         
         //  Students: Add code to create empty stack instances for the Undo stack 
+        Undo = new BufferedImageStack(null);
         	//and the Redo stack, and put your code for this here:
+        Redo = new BufferedImageStack(null);
         
     }
 
@@ -216,7 +220,7 @@ public class ImageEnhancer extends Component implements ActionListener {
     }
     
     public void run() {
-        JFrame f = new JFrame("ImageEnhancer without Undo or Redo"); // Students should update this.
+        JFrame f = new JFrame("\"Image Enhancer WITH Undo AND Redo by Aaron Nguyen and Jeremy Schoonover"); // Students should update this.
         f.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {System.exit(0);}
         });
