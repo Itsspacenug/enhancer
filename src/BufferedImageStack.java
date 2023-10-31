@@ -7,7 +7,12 @@ import java.util.EmptyStackException;
 public class BufferedImageStack {
 
 	public BufferedImage[] array;
+	public BufferedImageStack() {
+		array = new BufferedImage[2];
+		
+	}
 	public BufferedImageStack(BufferedImage[] b) {
+		super();
 		array = new BufferedImage[2];
 		array = b;
 		
@@ -72,7 +77,7 @@ public class BufferedImageStack {
 	IndexOutOfBounds exception. (Note: get(0) gets the bottom element of the
 	stack -- the one that was pushed in first, but not yet popped out.)*/
 	public BufferedImage get(int index) {
-		return array[index]; //gets image at certain index
+		return array[index]; //gets image at certain index 
 	}
 	
 	//returns the number elements currently in the stack.
