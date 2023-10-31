@@ -37,6 +37,8 @@ public class ImageEnhancer extends Component implements ActionListener {
     byte[] darkening_lut, photoneg_lut, threshold_lut; // look-up tables
     LookupOp darkening_op, photoneg_op, threshold_op; // look-up operators
     ConvolveOp blurring_op, sharpening_op; // convolution operators
+    BufferedImageStack undo_op, redo_op; //
+    
     
     // Note that the menu items are public so that they can be easily called
     // by the external autograder code.
@@ -47,8 +49,8 @@ public class ImageEnhancer extends Component implements ActionListener {
 
     //  Students: Here, you should declare two variables to hold instances
     	//of your stack class, with one for Undo and one for Redo.
-    private BufferedImageStack Undo;
-    private BufferedImageStack Redo;
+    private BufferedImageStack undoStack;
+    private BufferedImageStack redoStack;
     
 
     // A 3x3 filtering kernel for high-pass filtering:
@@ -99,8 +101,8 @@ public class ImageEnhancer extends Component implements ActionListener {
      menuBar.add(editMenu);
      menuBar.add(imageMenu);
      
-     undoItem.setEnabled(false);
-     redoItem.setEnabled(false);
+     undoItem.setEnabled(true);
+     redoItem.setEnabled(true);
      
     }
     void setUpImageTransformations() {
@@ -135,6 +137,13 @@ public class ImageEnhancer extends Component implements ActionListener {
      // Set up the Sharpening (convolution with high-pass filtering) operation
      sharpening_op = new ConvolveOp(new Kernel(3, 3, highPass),
        ConvolveOp.EDGE_NO_OP, null);
+     
+     //Set up the Undoing (SOMETHING ) operation
+     BufferedImageStack undo_op = new BufferedImageStack();
+    		 
+     //Set up Redoing (SOMETHING ) operation
+     BufferedImageStack redo_op = new BufferedImageStack();
+
     }
 
     public ImageEnhancer() {
@@ -153,9 +162,9 @@ public class ImageEnhancer extends Component implements ActionListener {
         }
         
         //  Students: Add code to create empty stack instances for the Undo stack 
-        Undo = new BufferedImageStack(null);
+        undoStack = new BufferedImageStack();
         	//and the Redo stack, and put your code for this here:
-        Redo = new BufferedImageStack(null);
+        redoStack = new BufferedImageStack();
         
     }
 
@@ -182,6 +191,12 @@ public class ImageEnhancer extends Component implements ActionListener {
     public void threshold() {
   biFiltered = threshold_op.filter(biWorking, null);
     }
+    public void undo() {
+  biFiltered = undo_op.undoStack();
+    }
+    public void redo() {
+  biFiltered = redo_op.redoStack();   
+    }
        
     // We handle menu selection events here: //
     public void actionPerformed(ActionEvent e) {
@@ -192,7 +207,10 @@ public class ImageEnhancer extends Component implements ActionListener {
         //  these items when the user selects them.
 
      //System.out.println("The actionEvent is "+e); // This can be useful when debugging.
+    	
      if (e.getSource()==exitItem) { System.exit(0); }
+     if (e.getSource() == redoItem) { redo(); }
+     if (e.getSource() == undoItem) { undo(); }
      if (e.getSource()==blurItem) { blur(); }
      if (e.getSource()==sharpenItem) { sharpen(); }
      if (e.getSource()==darkenItem) { darken(); }
@@ -235,8 +253,8 @@ public class ImageEnhancer extends Component implements ActionListener {
      //  Students: Uncomment this code that prints out the numbers of elements
      	// in each of the two stacks (Undo and Redo):
         
-        //System.out.println("The Undo stack contains " + undoStack.getSize() + " elements.");
-        //System.out.println("The Redo stack contains " + redoStack.getSize() + " elements.");
+        System.out.println("The Undo stack contains " + undoStack.getSize() + " elements.");
+        System.out.println("The Redo stack contains " + redoStack.getSize() + " elements.");
     }
     
     //To make sure we are actually assigning the values of our BufferedImages instead of
