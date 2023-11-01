@@ -37,7 +37,7 @@ public class ImageEnhancer extends Component implements ActionListener {
     byte[] darkening_lut, photoneg_lut, threshold_lut; // look-up tables
     LookupOp darkening_op, photoneg_op, threshold_op; // look-up operators
     ConvolveOp blurring_op, sharpening_op; // convolution operators
-    BufferedImageStack undo_op, redo_op; //
+    //BufferedImageStack undo_op, redo_op; //
     
     
     // Note that the menu items are public so that they can be easily called
@@ -138,12 +138,12 @@ public class ImageEnhancer extends Component implements ActionListener {
      sharpening_op = new ConvolveOp(new Kernel(3, 3, highPass),
        ConvolveOp.EDGE_NO_OP, null);
      
-     //Set up the Undoing (SOMETHING ) operation
+     /*//Set up the Undoing (SOMETHING ) operation
      BufferedImageStack undo_op = new BufferedImageStack();
     		 
      //Set up Redoing (SOMETHING ) operation
      BufferedImageStack redo_op = new BufferedImageStack();
-
+*/
     }
 
     public ImageEnhancer() {
@@ -191,12 +191,12 @@ public class ImageEnhancer extends Component implements ActionListener {
     public void threshold() {
   biFiltered = threshold_op.filter(biWorking, null);
     }
-    public void undo() {
+    /*public void undo() {
   biFiltered = undo_op.undoStack();
     }
     public void redo() {
   biFiltered = redo_op.redoStack();   
-    }
+    }*/
        
     // We handle menu selection events here: //
     public void actionPerformed(ActionEvent e) {
@@ -209,15 +209,29 @@ public class ImageEnhancer extends Component implements ActionListener {
      //System.out.println("The actionEvent is "+e); // This can be useful when debugging.
     	
      if (e.getSource()==exitItem) { System.exit(0); }
-     if (e.getSource() == redoItem) { redo(); }
-     if (e.getSource() == undoItem) { undo(); }
-     if (e.getSource()==blurItem) { blur(); }
-     if (e.getSource()==sharpenItem) { sharpen(); }
-     if (e.getSource()==darkenItem) { darken(); }
-     if (e.getSource()==photoNegItem) { photoneg(); }
-     if (e.getSource()==thresholdItem) { threshold(); }
+     if (e.getSource() == redoItem) { 
+    		 undoStack.push(biWorking);
+    		 biWorking = redoStack.pop();
+     	} 
+     if (e.getSource() == undoItem) { 
+    		 redoStack.push(biWorking);
+    		 biWorking = undoStack.pop();
+     }
+     if (e.getSource()==blurItem) { blur(); undoStack.push(biWorking);}
+     if (e.getSource()==sharpenItem) { sharpen();undoStack.push(biWorking); }
+     if (e.getSource()==darkenItem) { darken(); undoStack.push(biWorking);}
+     if (e.getSource()==photoNegItem) { photoneg();undoStack.push(biWorking);}
+     if (e.getSource()==thresholdItem) { threshold(); undoStack.push(biWorking);}
         gWorking.drawImage(biFiltered, 0, 0, null); // Draw the pixels from biFiltered into biWorking.
         repaint(); // Ask Swing to update the screen.
+        
+        /*if(undoStack.isEmpty()) {//checks if changes has been made
+        	undoItem.setEnabled(false); //if empty cannot use button
+        } else {undoItem.setEnabled(true);} //not empty can use button
+        if(redoStack.isEmpty()) {//checks if changes has been made
+        	redoItem.setEnabled(false);//if empty cannot use button
+        } else {redoItem.setEnabled(true);}//not empty can use button*/
+        
         printNumbersOfElementsInBothStacks(); // Report on the states of the stacks.
         return;      
     }
@@ -253,8 +267,8 @@ public class ImageEnhancer extends Component implements ActionListener {
      //  Students: Uncomment this code that prints out the numbers of elements
      	// in each of the two stacks (Undo and Redo):
         
-        System.out.println("The Undo stack contains " + undoStack.getSize() + " elements.");
-        System.out.println("The Redo stack contains " + redoStack.getSize() + " elements.");
+       System.out.println("The Undo stack contains " + undoStack.getSize() + " elements.");
+       System.out.println("The Redo stack contains " + redoStack.getSize() + " elements.");
     }
     
     //To make sure we are actually assigning the values of our BufferedImages instead of
