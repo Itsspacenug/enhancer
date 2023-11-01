@@ -1,18 +1,19 @@
 // File name: BufferedImageStack
 // By: Aaron Nguyen and Jeremy Schoonover
 //WHAT IS IT DOING
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.util.EmptyStackException;
 
 public class BufferedImageStack {
 
 	public BufferedImage[] array;
+	
 	public BufferedImageStack() {
 		array = new BufferedImage[2];
 		
 	}
 	public BufferedImageStack(BufferedImage[] b) {
-		super();
 		array = new BufferedImage[2];
 		array = b;
 		
@@ -25,7 +26,7 @@ public class BufferedImageStack {
 	//If this would exceed the capacity of the array,
 	//then a new array should be allocated having double the size of the old array,
 	//and the old array's elements copied to the new array.
-	private void push(BufferedImage someBufferedImage) {
+	public void push(BufferedImage someBufferedImage) {
 		int cap=0; //measures capacity
 		for(int i = 0; i<array.length; i++) {
 			if(array[i] == null) { //checks if image is there
@@ -33,13 +34,15 @@ public class BufferedImageStack {
 				array[i] = someBufferedImage; // sets an image to that spot
 			}
 		}
-		BufferedImage[] newArray = new BufferedImage[array.length * 2]; //creates a bigger array
+		BufferedImage[] newArray;//creates a bigger array
 		if(cap==0) {
+			newArray = new BufferedImage[array.length];
 			for(int i = 0; i<array.length; i++) {
 				newArray[i] = someBufferedImage; //copies to new array
 			}
 			newArray[array.length] = someBufferedImage; 
 		}
+		else {newArray = new BufferedImage[array.length * 2]; newArray[array.length] = someBufferedImage; }
 	}
 	
 	/*throws an exception if the stack is empty; otherwise returns the top
@@ -97,5 +100,17 @@ public class BufferedImageStack {
 	specifications.*/
 	public int getArraySize() {
 		return array.length; //returns array size
+	}
+	
+	
+	/*BufferedImage biTemp; // Used when reading in an image.
+    BufferedImage biWorking; // The current image.
+    BufferedImage biFiltered; // Result of processing the current image.*/
+	public BufferedImage undoStack(BufferedImage biTemp, BufferedImage biWorking, BufferedImage biFiltered) {
+		return null;
+		
+	}
+	public BufferedImage redoStack(BufferedImage biTemp, BufferedImage biWorking, BufferedImage biFiltered) {
+		return null;
 	}
 }
